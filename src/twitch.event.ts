@@ -14,7 +14,7 @@ import {
 import {
   socketUrl
 } from "./const.ts";
-import { Stream } from "./twitch.types.ts";
+import { Stream, User } from "./twitch.types.ts";
 
 const { validToken, data } = await validateAccessToken();
 if (validToken) {
@@ -28,7 +28,7 @@ if (validToken) {
 const streamerLogins = ["mnlaugh", "tontonours34"];
 const streamers = await getStreamers(streamerLogins);
 if (streamers.length === 0) throw new Error("No streamers could be recovered, help!");
-streamers.forEach(streamer => localStorage.setItem(streamer.id, JSON.stringify(streamer)));
+streamers.forEach((streamer: User): void => localStorage.setItem(`user-${streamer.id}`, JSON.stringify(streamer)));
 logger.info(`🗃️  Store ${streamers.length} streamers saved in local storage: ${streamerLogins.toString()}`);
 
 let dataInterval: number;
@@ -60,17 +60,17 @@ function connectWebSocket(): void {
         await delay(2000);
         const stream = {...await getStreamDetails(broadcaster_user_id), broadcaster_user_name };
         logger.info("📢 stream online détected for " + broadcaster_user_name, stream);
-        localStorage.setItem(broadcaster_user_id, JSON.stringify(stream));
+        localStorage.setItem(`stream-${broadcaster_user_id}`, JSON.stringify(stream));
         await triggern8n(data.payload.subscription.type, stream);
         dataInterval = setInterval( async (): Promise<void> => {
           const dataStream = {...await getStreamDetails(broadcaster_user_id), broadcaster_user_name };
-          localStorage.setItem(broadcaster_user_id, JSON.stringify(dataStream));
+          localStorage.setItem(`stream-${broadcaster_user_id}`, JSON.stringify(dataStream));
           logger.info("🗃️  Store stream data updated")
         }, 60000);
       } else if (data.payload.subscription.type === "stream.offline") {
         const { broadcaster_user_id, broadcaster_user_name } = data.payload.event;
         logger.info("📢 stream détected for " + broadcaster_user_name);
-        const streamStored = localStorage.getItem(broadcaster_user_id);
+        const streamStored = localStorage.getItem(`stream-${broadcaster_user_id}`);
         if (streamStored) {
           const stream = JSON.parse(streamStored) as Stream;
           await triggern8n(data.payload.subscription.type, stream);

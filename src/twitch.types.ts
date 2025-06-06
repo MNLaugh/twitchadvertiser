@@ -1,12 +1,12 @@
 export type User = {
   id: string,
-  login: "twitchdev",
-  display_name: "TwitchDev",
-  type: "",
-  broadcaster_type: "partner",
-  description: "Supporting third-party developers building Twitch integrations from chatbots to game integrations.",
-  profile_image_url: "https://static-cdn.jtvnw.net/jtv_user_pictures/8a6381c7-d0c0-4576-b179-38bd5ce1d6af-profile_image-300x300.png",
-  view_count: 5980557,
+  login: string;
+  display_name: string;
+  type: string;
+  broadcaster_type: string;
+  description: string;
+  profile_image_url: string;
+  view_count: number;
 }
 
 export type Stream = {

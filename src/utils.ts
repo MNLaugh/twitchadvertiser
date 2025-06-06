@@ -1,10 +1,10 @@
-import { n8nwh } from "./const.ts";
-import { Stream } from "./twitch.types.ts";
+import { n8nwh, n8nwh_test } from "./const.ts";
+import { Stream, User } from "./twitch.types.ts";
 import Logger from "./logger.ts";
 export const logger = Logger.create({ prefix: "[Twitch api] =>" });
 export const delay = (ms: number): Promise<unknown> => new Promise(r => setTimeout(r, ms));
 export async function triggern8n(type:string, stream: Stream): Promise<void> {
-  const response = await fetch(n8nwh, {
+  const response = await fetch(n8nwh_test, {
     method: "POST",
     headers: {
       "n8n": "tonton",
@@ -12,7 +12,8 @@ export async function triggern8n(type:string, stream: Stream): Promise<void> {
     },
     body: JSON.stringify({
       type,
-      stream
+      stream,
+      streamer: JSON.parse(localStorage.getItem(`user-${stream.user_id}`)!) as User
     })
   });
   const result = await response.text();
