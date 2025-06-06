@@ -1,0 +1,7 @@
+version: '3.9'
+
+services:
+  twitch-api:
+    image: twitch:latest
+    container_name: twitch-api
+    restart: unless-stopped
